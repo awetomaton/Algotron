@@ -1,0 +1,16 @@
+s3:
+    bucket: algnext-dev
+    endpoint: algnext-dev.s3.dualstack.us-east-2.amazonaws.com
+    keyFormat: "artifacts\
+        /{{workflow.name}}\
+        /{{pod.name}}\
+        /{{workflow.creationTimestamp.Y}}\
+        /{{workflow.creationTimestamp.m}}\
+        /{{workflow.creationTimestamp.d}}"
+    region: us-east-2
+    accessKeySecret: 
+      name: aws-secret
+      key: accesskey
+    secretKeySecret: 
+      name: aws-secret
+      key: secretkey
