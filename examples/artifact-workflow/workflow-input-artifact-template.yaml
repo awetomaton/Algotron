@@ -1,0 +1,40 @@
+apiVersion: argoproj.io/v1alpha1
+kind: WorkflowTemplate
+metadata:
+  name: workflow-input-artifact-template
+spec:
+  templates:
+    - name: whalesay
+      inputs:
+        parameters:
+          - name: message
+      container:
+        name: ''
+        image: 'docker/whalesay:latest'
+        command:
+          - sh
+          - '-c'
+        args:
+          - >-
+            sleep 1; cowsay '{{inputs.parameters.message}}' | tee
+            /tmp/hello_world.txt
+        resources: {}
+        volumeMounts:
+          - name: out
+            mountPath: /mnt/out
+      volumes:
+        - name: out
+          emptyDir: { }
+      outputs:
+        parameters:
+          - name: message
+            valueFrom:
+              path: /mnt/out/hello_world.txt
+      retryStrategy:
+        limit: 10
+  entrypoint: whalesay
+  arguments: {}
+  ttlStrategy:
+    secondsAfterCompletion: 300
+  podGC:
+    strategy: OnPodCompletion

@@ -1,0 +1,12 @@
+apiVersion: argoproj.io/v1alpha1
+kind: Workflow
+metadata:
+  generateName: workflow-input-artifact-template-
+spec:
+  entrypoint: whalesay
+  arguments: 
+    parameters:
+      - name: message
+        value: hello test
+  workflowTemplateRef:
+    name: workflow-input-artifact-template

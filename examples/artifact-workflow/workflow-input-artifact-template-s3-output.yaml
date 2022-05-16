@@ -1,0 +1,35 @@
+apiVersion: argoproj.io/v1alpha1
+kind: WorkflowTemplate
+metadata:
+  name: workflow-input-artifact-template
+spec:
+  templates:
+  - name: whalesay
+    inputs:
+      parameters:
+        - name: message
+    container:
+      name: ''
+      image: 'docker/whalesay:latest'
+      command:
+        - sh
+        - '-c'
+      args:
+        - >-
+          sleep 1; cowsay '{{inputs.parameters.message}}' | tee
+          /tmp/hello_world.txt
+    outputs:
+      artifacts:
+      - name: message
+        path: /tmp
+        s3:
+          endpoint: s3.amazonaws.com
+          bucket: algnext-dev
+          region: us-east-2
+          key: output/demo2/hello_world.txt.tgz
+          accessKeySecret:
+            name: aws-secret
+            key: accesskey
+          secretKeySecret:
+            name: aws-secret
+            key: secretkey
