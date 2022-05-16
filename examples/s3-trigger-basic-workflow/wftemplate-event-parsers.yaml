@@ -1,0 +1,62 @@
+apiVersion: argoproj.io/v1alpha1
+kind: WorkflowTemplate
+
+metadata:
+  name: event-message-parsing
+  annotations: # human-readable info
+    author: jduckett
+    org: NASIC/GSPO
+    email: jduckett@awetomaton.com
+    description: |
+      This resource contains a variety of commonly-used parsing templates.
+
+  labels: # Used for querying / subsetting templates
+    class: parsing
+    source: event-notifications
+
+spec: # https://argoproj.github.io/argo-workflows/fields/#workflowspec
+  templates:
+  # Can be expanded to include additional 
+  - name: parse-s3-sns
+    # Currently extracts bucket and path of the file, could be expanded to return additional message params.
+    metadata:
+      annotations: # human-readable info
+        author: jduckett
+        org: NASIC/GSPO
+        email: jduckett@awetomaton.com
+        description: |
+          This resource contains a variety of commonly-used parsing templates.
+      labels:
+        class: parsing
+        source: sns
+
+    # TODO: Fill metrics in. Default workflow template should define global metrics to collect for all workflows.
+    # metrics:
+
+    inputs:
+      parameters:
+      - name: sns-message
+        description: SNS message of s3 activity.
+      artifacts:
+      - name: message
+        path: sns-message.json
+        raw:
+          data: |
+            {{inputs.parameters.sns-message}}
+
+    container:
+      image: stedolan/jq
+      command: [sh, -c]
+      args: [" jq '.Message | fromjson | .Records[0].s3.object.key' sns-message.json > s3-path.txt |\
+        jq '.Message | fromjson | .Records[0].s3.bucket.name' sns-message.json > s3-bucket.txt"]
+
+    outputs:
+      parameters:
+        - name: s3-path
+          description: Path of s3 object that triggered the notification.
+          valueFrom:
+            path: s3-path.txt
+        - name: s3-bucket
+          description: Bucket that the s3 object derived from.
+          valueFrom:
+            path: s3-bucket.txt
