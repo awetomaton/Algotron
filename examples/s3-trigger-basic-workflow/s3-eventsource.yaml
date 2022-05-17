@@ -1,3 +1,20 @@
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: aws-sns-ingress
+spec:
+  rules:
+  - host: argoevents.rancher.awetomaton.com
+    http:
+      paths:
+      - path: /sns-test
+        pathType: Exact
+        backend:
+          service:
+            name: aws-sns-eventsource-svc
+            port:
+              number: 12000
+---
 apiVersion: argoproj.io/v1alpha1
 kind: EventSource
 metadata:
