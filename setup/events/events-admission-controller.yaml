@@ -1,5 +1,5 @@
 
-# jduckett - retrieved from https://raw.githubusercontent.com/argoproj/argo-events/stable/manifests/install-validating-webhook.yaml. Replaced all instances of namespace: workflows with namespace: workflows
+# jduckett - retrieved from https://raw.githubusercontent.com/argoproj/argo-events/stable/manifests/install-validating-webhook.yaml. Replaced all instances of namespace: argo-events with namespace: workflows
 
 apiVersion: v1
 kind: ServiceAccount
