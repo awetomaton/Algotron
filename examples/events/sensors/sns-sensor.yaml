@@ -12,8 +12,6 @@ spec:
   triggers:
     - template:
         name: sns-workflow
-        # log:
-        #   intervalSeconds: 5
         k8s:
           operation: create
           source:
