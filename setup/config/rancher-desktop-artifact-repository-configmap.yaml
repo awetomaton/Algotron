@@ -1,0 +1,24 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  annotations:
+    workflows.argoproj.io/default-artifact-repository: minio
+  name: artifact-repositories
+data:
+  artifactRepository: |
+    s3:
+        bucket: algnext-dev-output
+        endpoint: argo-artifacts:9000
+        insecure: true
+        keyFormat: "output\
+          /{{workflow.creationTimestamp.Y}}\
+          /{{workflow.creationTimestamp.m}}\
+          /{{workflow.creationTimestamp.d}}\
+          /{{workflow.name}}\
+          /{{pod.name}}"
+        accessKeySecret: 
+          name: minio-secret
+          key: accesskey
+        secretKeySecret: 
+          name: minio-secret
+          key: secretkey

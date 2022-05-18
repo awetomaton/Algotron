@@ -16,7 +16,7 @@ metadata:
 
 spec: # https://argoproj.github.io/argo-workflows/fields/#workflowspec
   templates:
-  # Can be expanded to include additional 
+#------------------------------------------------------------------------------------------------------------------------------
   - name: parse-s3-sns
     # Currently extracts bucket and path of the file, could be expanded to return additional message params.
     metadata:
@@ -25,7 +25,7 @@ spec: # https://argoproj.github.io/argo-workflows/fields/#workflowspec
         org: NASIC/GSPO
         email: jduckett@awetomaton.com
         description: |
-          This resource contains a variety of commonly-used parsing templates.
+          This template parses an AWS SNS message and maps them to output parameters.
       labels:
         class: parsing
         source: sns
@@ -60,3 +60,47 @@ spec: # https://argoproj.github.io/argo-workflows/fields/#workflowspec
           description: Bucket that the s3 object derived from.
           valueFrom:
             path: s3-bucket.txt
+#------------------------------------------------------------------------------------------------------------------------------
+  - name: parse-minio
+    # Currently extracts bucket and path of the file, could be expanded to return additional message params.
+    metadata:
+      annotations: # human-readable info
+        author: jduckett
+        org: NASIC/GSPO
+        email: jduckett@awetomaton.com
+        description: |
+          This template parses a MinIO message and maps them to output parameters.
+      labels:
+        class: parsing
+        source: minio
+
+    # TODO: Fill metrics in. Default workflow template should define global metrics to collect for all workflows.
+    # metrics:
+
+    inputs:
+      parameters:
+      - name: minio-message
+        description: MinIO message of file activity.
+      artifacts:
+      - name: message
+        path: minio-message.json
+        raw:
+          data: |
+            {{inputs.parameters.minio-message}}
+
+    container:
+      image: stedolan/jq
+      command: [sh, -c]
+      args: [" jq '.notification[0].s3.object.key' minio-message.json > minio-path.txt |\
+        jq '.notification[0].s3.bucket.name' minio-message.json > minio-bucket.txt"]
+
+    outputs:
+      parameters:
+        - name: minio-path
+          description: Path of minio object that triggered the notification.
+          valueFrom:
+            path: minio-path.txt
+        - name: minio-bucket
+          description: Bucket that the minio object derived from.
+          valueFrom:
+            path: minio-bucket.txt

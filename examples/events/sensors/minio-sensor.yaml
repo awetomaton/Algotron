@@ -1,0 +1,68 @@
+apiVersion: argoproj.io/v1alpha1
+kind: Sensor
+metadata:
+  name: text-file-sensor
+spec:
+  template:
+    serviceAccountName: operate-workflow-sa
+  dependencies:
+    - name: text-file-upload
+      eventSourceName: minio-eventsource
+      eventName: default
+  triggers:
+    - template:
+        name: process-text-file
+        k8s:
+          operation: create
+          source:
+            resource:
+              apiVersion: argoproj.io/v1alpha1
+              kind: Workflow
+              metadata:
+                generateName: minio-workflow-
+              spec:
+                entrypoint: main
+                arguments:
+                  parameters:
+                  - name: message
+                templates:
+                - name: main
+                  dag:
+                    tasks:
+                    - name: extract-message
+                      templateRef:
+                        name: event-message-parsing
+                        template: parse-minio
+                      arguments:
+                        parameters:
+                          - name: minio-message
+                            value: "{{workflow.parameters.message}}"
+
+                    - name: log-demo # Standard
+                      dependencies: [extract-message]
+                      templateRef:
+                        name: minio-examples
+                        template: log-demo
+                      arguments:
+                        parameters:
+                          - name: string-value
+                            value: "{{tasks.extract-message.outputs.parameters.minio-path}}"
+
+
+                    - name: artifact-test # Artifacts
+                      dependencies: [extract-message]
+                      templateRef:
+                        name: minio-examples
+                        template: artifact-demo
+                      arguments:
+                        parameters:
+                          - name: string-value
+                            value: "{{tasks.extract-message.outputs.parameters.minio-path}}"
+
+
+
+          parameters:
+            - src:
+                dependencyName: text-file-upload
+                dataKey: body
+              dest: spec.arguments.parameters.0.value

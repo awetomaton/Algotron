@@ -1,0 +1,60 @@
+apiVersion: argoproj.io/v1alpha1
+kind: WorkflowTemplate
+metadata:
+  name: minio-examples
+spec:
+  templates:
+  - name: log-demo
+    # Currently extracts bucket and path of the file, could be expanded to return additional message params.
+    metadata:
+      annotations: # human-readable info
+        author: jduckett
+        org: NASIC/GSPO
+        email: jduckett@awetomaton.com
+        description: |
+          This template parses an AWS SNS message and maps them to output parameters.
+      labels:
+        class: processing
+
+    inputs:
+      parameters:
+      - name: string-value
+        description: SNS message of s3 activity.
+
+    container:
+      image: docker/whalesay
+      command: [cowsay]
+      args: ["{{inputs.parameters.string-value}}"]
+
+#-----------------------------------------
+
+  - name: artifact-demo
+    # Currently extracts bucket and path of the file, could be expanded to return additional message params.
+    metadata:
+      annotations: # human-readable info
+        author: jduckett
+        org: NASIC/GSPO
+        email: jduckett@awetomaton.com
+        description: |
+          This template parses an AWS SNS message and maps them to output parameters.
+      labels:
+        class: processing
+
+    inputs:
+      parameters:
+      - name: string-value
+        description: SNS message of s3 activity.
+
+    container:
+      image: docker/whalesay
+      command: [sh, -c]
+      args: ["cowsay {{inputs.parameters.string-value}} | tee /tmp/hello_world.txt"]
+
+    outputs:
+      artifacts:
+      # generate hello-art artifact from /tmp/hello_world.txt
+      # artifacts can be directories as well as files
+      - name: hello-art
+        path: /tmp/hello_world.txt
+        archive:
+          none: {}
