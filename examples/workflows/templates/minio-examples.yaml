@@ -12,14 +12,14 @@ spec:
         org: NASIC/GSPO
         email: jduckett@awetomaton.com
         description: |
-          This template parses an AWS SNS message and maps them to output parameters.
+          This template passes a string to whalesay.
       labels:
         class: processing
 
     inputs:
       parameters:
       - name: string-value
-        description: SNS message of s3 activity.
+        description: Input message.
 
     container:
       image: docker/whalesay
@@ -36,14 +36,14 @@ spec:
         org: NASIC/GSPO
         email: jduckett@awetomaton.com
         description: |
-          This template parses an AWS SNS message and maps them to output parameters.
+          This template passes a string to whalesay and logs an artifact.
       labels:
         class: processing
 
     inputs:
       parameters:
       - name: string-value
-        description: SNS message of s3 activity.
+        description: Input message.
 
     container:
       image: docker/whalesay
@@ -56,5 +56,16 @@ spec:
       # artifacts can be directories as well as files
       - name: hello-art
         path: /tmp/hello_world.txt
+        s3:
+          endpoint: argo-artifacts:9000
+          bucket: algnext-dev-output
+          key: output/demo2/hello_world.txt.tgz
+          insecure: true
+          accessKeySecret:
+            name: minio-secret
+            key: accesskey
+          secretKeySecret:
+            name: minio-secret
+            key: secretkey
         archive:
           none: {}
