@@ -1,0 +1,28 @@
+apiVersion: argoproj.io/v1alpha1
+kind: EventSource
+metadata:
+  name: kafka
+  namespace: algnext-ns
+spec:
+  kafka:
+    example:
+      # kafka broker url
+      url: algnext-kafka:9092
+      # name of the kafka topic
+      topic: quickstart-events
+      # jsonBody specifies that all event body payload coming from this
+      # source will be JSON
+      jsonBody: true
+      # partition id
+      partition: "0"
+      # optional backoff time for connection retries.
+      # if not provided, default connection backoff time will be used.
+      connectionBackoff:
+        # duration in nanoseconds, or strings like "3s", "2m". following value is 10 seconds
+        duration: 10s
+        # how many backoffs
+        steps: 5
+        # factor to increase on each step.
+        # setting factor > 1 makes backoff exponential.
+        factor: 2
+        jitter: 0.2
