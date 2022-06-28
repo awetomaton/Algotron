@@ -1,0 +1,41 @@
+apiVersion: argoproj.io/v1alpha1
+kind: WorkflowTemplate
+
+metadata:
+  name: common
+  annotations: # human-readable info
+    author: jduckett
+    org: NASIC/GSPO
+    email: jduckett@awetomaton.com
+    description: |
+      This resource contains a variety of commonly-used utilities.
+
+  labels: # Used for querying / subsetting templates
+    class: common
+
+spec: # https://argoproj.github.io/argo-workflows/fields/#workflowspec
+  templates:
+#------------------------------------------------------------------------------------------------------------------------------
+  - name: echo
+    # Currently extracts bucket and path of the file, could be expanded to return additional message params.
+    metadata:
+      annotations: # human-readable info
+        author: jduckett
+        org: NASIC/GSPO
+        email: jduckett@awetomaton.com
+        description: |
+          This template echoes a string.
+      labels:
+        class: common
+
+    # TODO: Fill metrics in. Default workflow template should define global metrics to collect for all workflows.
+    # metrics:
+
+    inputs:
+      parameters:
+      - name: string
+        description: A string to be echoed.
+
+    container:
+      image: alpine:3.7
+      command: [echo, "{{inputs.parameters.string}}"]

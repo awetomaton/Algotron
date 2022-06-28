@@ -3,6 +3,8 @@ kind: EventSource
 metadata:
   name: minio-eventsource
 spec:
+  template:
+    serviceAccountName: argo-events-sa
   minio:
     default:
       # bucket information
