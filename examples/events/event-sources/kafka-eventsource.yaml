@@ -14,7 +14,10 @@ spec:
       # source will be JSON
       jsonBody: true
       # partition id
-      partition: "0"
+      # partition: "0"
+      consumerGroup:
+        groupName: "argo-events"
+        oldest: false
       # optional backoff time for connection retries.
       # if not provided, default connection backoff time will be used.
       connectionBackoff:
