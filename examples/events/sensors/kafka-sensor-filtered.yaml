@@ -1,14 +1,24 @@
 apiVersion: argoproj.io/v1alpha1
 kind: Sensor
 metadata:
-  name: kafka-sensor
+  name: kafka-sensor-filtered
 spec:
   template:
     serviceAccountName: operate-workflow-sa
   dependencies:
-    - name: test-dep
+    #- name: test-dep
+    #  eventSourceName: kafka
+    #  eventName: example
+    - name: test-dep-filtered
       eventSourceName: kafka
       eventName: example
+      filters:
+        data:
+          - path: body.cust_id
+            type: number
+            comparator: ">"
+            value:
+              - "3" 
   triggers:
     - template:
         name: kafka-workflow-trigger
@@ -39,5 +49,5 @@ spec:
           parameters:
             - src:
                 dependencyName: test-dep
-                dataKey: body
+                dataKey: body.cust_id
               dest: spec.arguments.parameters.0.value
