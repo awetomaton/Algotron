@@ -1,0 +1,28 @@
+apiVersion: networking.istio.io/v1beta1
+kind: Gateway
+metadata:
+  name: argo-server-gateway
+  namespace: algnext-ns
+spec:
+  selector:
+    istio: ingressgateway
+  servers:
+    - port:
+        number: 80
+        name: http
+        protocol: HTTP
+      hosts:
+        - algnext.pir.nasiccloud.io
+      # Lets actually encrypt our traffic here soon.....
+      # tls:
+        # httpsRedirect: true # sends 301 redirect for http requests
+    # - port:
+    #     number: 443
+    #     name: https-443
+    #     protocol: HTTPS
+    #   hosts:
+    #     - algnext.pir.nasiccloud.io
+      # tls:
+        # mode: MUTUAL # enables HTTPS on this port
+        # serverCertificate: /etc/certs/servercert.pem
+        # privateKey: /etc/certs/privatekey.pem
