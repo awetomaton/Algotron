@@ -1,5 +1,5 @@
 The Argo Workflow Java SDK is a Java library that provides a set of Java classes and methods for interacting with the Argo Workflows API. It can be used to create and manage workflows on a Kubernetes cluster from a Java application.  Although more complex than using the four other interfaces (kubectl, Argo CLI, curl, and programmatic HTTP), the Java SDK can be used to develop a more powerful and complete Java application for working with Argo Workflows.
 
-A good reference for using Java with VS Code is [here](https://code.visualstudio.com/docs/java/java-tutorial)
+A good reference for using Java with VS Code is [here](https://code.visualstudio.com/docs/java/java-tutorial).
 After VS Code is installed, load the "Extension Pack for Java".  The "Get Started" instructions will guide
 you through installing the JDK. 
